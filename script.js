@@ -53,6 +53,9 @@ function reloadDisplayCalc(input){
         if(firstOperand.textContent == 0 && input === '.' || firstOperand.textContent != 0){
             firstOperand.textContent = firstOperand.textContent + input;
         }
+        else if(firstOperand.textContent === '0.'){
+            firstOperand.textContent = firstOperand.textContent + input;
+        }
         else{
             firstOperand.textContent = input;
         }
@@ -122,6 +125,36 @@ function resetCounts(){
     equalsPressed = DEFAULT_EQUALS_PRESSED;
 }
 
+function round(float){
+    console.log('float ist ' + float);
+    let decimalPlacesCounter=0;
+    let pointPosition ='';
+    float=String(float);
+    for(let i=1;float.charAt(float.length -i);i++){
+        console.log('floatie is ' + float.slice(-i));
+        if(float.slice(-i) === '0'){
+            decimalPlacesCounter++;
+        }
+        else if(float[i] === '.'){
+            pointPosition = i;
+            break;
+        }
+    }
+    let floatLength = float.length
+    float = parseFloat(float);
+    if(decimalPlacesCounter !== 0 && pointPosition !== ''){
+        return float.toPrecision(floatLength-decimalPlacesCounter);
+    }else if(floatLength > pointPosition + 2 && pointPosition !== ''){
+        return float.toPrecision(pointPosition +2);
+    }else if(pointPosition !== ''){
+        return float.toPrecision(floatLength-1);
+    }
+    else{
+        console.log('za');
+        return float;
+    }
+}
+
 function add(a,b){
  return a + b;
 }
@@ -139,20 +172,23 @@ function divide(a,b){
 }
 
 function operate(usedOperator,a,b){
-    a=parseInt(a);
-    b=parseInt(b);
+    a=parseFloat(a);
+    b=parseFloat(b);
+
+    console.log(a)
+    console.log(b)
     
     if(usedOperator ==='+'){
-       return add(a,b);
+       return round(add(a,b));
     }
     else if(usedOperator ==='-'){
-        return substract(a,b);
+        return round(substract(a,b));
     }
     else if(usedOperator ==='x'){
-        return multiply(a,b);
+        return round(multiply(a,b));
     }
     else if(usedOperator ==='/'){
-        return divide(a,b);
+        return round(divide(a,b));
     }
 }
 

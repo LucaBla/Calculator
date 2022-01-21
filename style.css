@@ -23,7 +23,7 @@ body {
     border: 0.3em solid rgb(124, 124, 124);
     border-radius: 15px;
     width: 20em;
-    height: 30em;
+    min-height: 30em;
     margin-top: 4em;
     margin-bottom: 4em;
     box-shadow: 0px 0px 20px 0px;
@@ -37,7 +37,7 @@ body {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
     width: 90%;
-    height: 3em;
+    min-height: 3em;
     background-color: rgb(189, 215, 255);
     border: 0.1em solid rgb(124, 124, 124);
     border-radius: 15px;
@@ -47,11 +47,19 @@ body {
 #calculation{
     margin-left: 0.3em;
     float: left;
+    width: 40%;
+    white-space: initial;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
 #sol{
     margin-right: 0.3em;
+    width: 40%;
+    white-space: initial;
+    word-wrap: break-word;
     text-align: right;
+    color: green;
 }
 
 .buttons-grid{
@@ -60,7 +68,8 @@ body {
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
     grid-gap: 0.5em;
     width: 90%;
-    height: 60%;
+    min-height: 18em;
+    margin-bottom: 1.5em;
 }
 
 .btn{
