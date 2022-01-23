@@ -56,6 +56,9 @@ function reloadDisplayCalc(input){
     else if(input ==='C'){
         deleteLastChar();
     }
+    else if(input === '%'){
+        convertToPercent();
+    }
     else if(!operators.includes(input) && operatorUsed === false){
         addToFirstNum(input);
     }
@@ -260,6 +263,15 @@ function round(float){
     }
     else{
         return float;
+    }
+}
+
+function convertToPercent(num){
+    if(secondOperand === '' || secondOperand.textContent === ''){
+        console.log('test');
+        firstOperand.textContent = firstOperand.textContent /100;
+    }else{
+        secondOperand.textContent = secondOperand.textContent / 100;
     }
 }
 
