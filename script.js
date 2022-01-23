@@ -19,10 +19,11 @@ let displaySol = document.querySelector('#sol');
 
 
 let firstOperand = document.querySelector('#first-num');
-let secondOperand;
+let secondOperand = '';
 let operator;
 let operatorUsed = DEFAULT_OPERATOR_USED;
 let equalsPressed = DEFAULT_EQUALS_PRESSED;
+let numPressed = false;
 let dotUsed = DEFAULT_DOT_USED;
 
 let operators =['/','x','-','+'];
@@ -42,42 +43,34 @@ function asignBtns(){
 }
 
 function getClickedBtn(){
-
         reloadDisplayCalc(this.textContent);
-
 }
 
 function reloadDisplayCalc(input){
     if(input === '='){
         calculateResult();
     }
-    if(input === 'AC'){
+    else if(input === 'AC'){
         resetAll();
     }
+    else if(input ==='C'){
+        deleteLastChar();
+    }
     else if(!operators.includes(input) && operatorUsed === false){
-        console.log('lol');
-        if(firstOperand.textContent == 0 && input === '.' || firstOperand.textContent != 0){
-            console.log('lol2');
-            addDot(input);
-        }
-        else if(firstOperand.textContent === '0.'){
-            console.log('atze');
-            firstOperand.textContent = firstOperand.textContent + input;
-        }
-        else{
-            firstOperand.textContent = input;
-        }
+        addToFirstNum(input);
+    }
+    else if(operatorUsed === false && operators.includes(input)){ 
+        changeOperator(input);
     }
     else if(operatorUsed === true){
-        if(operators.includes(input) && equalsPressed === true){
-            firstOperand.textContent = displaySol.textContent;
-            secondOperand.textContent = DEFAULT_SECOND_NUM;
-            operator.textContent = input;
-            resetCounts();
-            operatorUsed =true;
+        if(!operators.includes(input) && equalsPressed === false){
+            addToSecondNum(input);
+        }
+        else if(operators.includes(input) && equalsPressed === true){
+            useOperatorOnSol(input);
         }
         else if(!operators.includes(input) && equalsPressed === true && input !== '='){
-            resetCounts();
+            resetAll();
             if(input !== '.'){
                 firstOperand.textContent = input;
             }
@@ -85,40 +78,6 @@ function reloadDisplayCalc(input){
                 firstOperand.textContent = '0.';
                 dotUsed = true;
             }
-            secondOperand.textContent = DEFAULT_SECOND_NUM;
-            operator.textContent = DEFAULT_OPERATOR;
-            displaySol.textContent = DEFAULT_SOL;
-        }
-        else if(!operators.includes(input) && equalsPressed === false){
-            if(document.querySelector('#second-num')){
-                if(input === '.'){
-                    if(secondOperand.textContent === '' || dotUsed === true){
-                        return
-                    }
-                    else{
-                        secondOperand.textContent = secondOperand.textContent + input;
-                        dotUsed = true;
-                    }
-                }else{
-                    secondOperand.textContent = secondOperand.textContent + input;
-                }
-            }
-            else{
-                if(input !== '.'){
-                    createSecondNum(input);
-                }
-            }
-        }
-    }
-    else if(operatorUsed === false && operators.includes(input)){ 
-        if(document.querySelector('#operator')){
-            operator.textContent = input;
-            operatorUsed = true;
-            dotUsed = false;
-        }
-        else{
-        createOperator(input);
-        dotUsed = false;
         }
     }
 }
@@ -131,6 +90,11 @@ function calculateResult(){
     else if(equalsPressed === true){
         firstOperand.textContent = displaySol.textContent;
         displaySol.textContent = operate(operator.textContent,firstOperand.textContent,secondOperand.textContent);
+    }
+    if(displaySol.textContent === 'Infinity'){
+        displaySol.textContent = 'ERROR';
+    }else if(displaySol.textContent === 'NaN'){
+        displaySol.textContent = firstOperand.textContent;
     }
 }
 
@@ -149,6 +113,57 @@ function createSecondNum(newNum){
     displayCalc.appendChild(secondOperand);
 }
 
+function addToFirstNum(toAdd){
+        if(firstOperand.textContent == 0 && toAdd === '.' || firstOperand.textContent != 0){
+            addDot(toAdd);
+        }
+        else if(firstOperand.textContent === '0.'){
+            firstOperand.textContent = firstOperand.textContent + toAdd;
+        }
+        else if(firstOperand.textContent === '-0'){
+            firstOperand.textContent = '-'+toAdd; 
+        }
+        else{
+            firstOperand.textContent = toAdd;
+        }
+        numPressed = true;
+}
+
+function addToSecondNum(toAdd){
+    if(document.querySelector('#second-num')){
+        if(toAdd === '.'){
+            if(secondOperand.textContent === '' || dotUsed === true){
+                return
+            }
+            else{
+                secondOperand.textContent = secondOperand.textContent + toAdd;
+                dotUsed = true;
+            }
+        }else{
+            secondOperand.textContent = secondOperand.textContent + toAdd;
+        }
+    }
+    else{
+        if(toAdd !== '.'){
+            createSecondNum(toAdd);
+        }
+    }
+}
+
+function changeOperator(newOperator){
+    if(document.querySelector('#operator')){
+        operator.textContent = newOperator;
+        operatorUsed = true;
+        dotUsed = false;
+        numPressed = false;
+    }
+    else{
+    createOperator(newOperator);
+    dotUsed = false;
+    numPressed = false;
+    }
+}
+
 function addDot(input){
     if(dotUsed === false && input === '.'){
         firstOperand.textContent = firstOperand.textContent + input;
@@ -159,16 +174,50 @@ function addDot(input){
     }
 }
 
+function useOperatorOnSol(operatorForSol){
+    firstOperand.textContent = displaySol.textContent;
+    secondOperand.textContent = DEFAULT_SECOND_NUM;
+    operator.textContent = operatorForSol;
+    resetCounts();
+    operatorUsed =true;
+}
+
+////////////////////////////////
+// Reset or Delete-Functions //
+//////////////////////////////
+
+function deleteLastChar(){
+    if(equalsPressed === true){
+        equalsPressed = false;
+    }
+    if(document.querySelector('#second-num') && secondOperand.textContent !== ''){
+        secondOperand.textContent = secondOperand.textContent.slice(0, secondOperand.textContent.length -1);
+
+    }
+    else if(document.querySelector('#operator') && operator.textContent !== ''){
+        operator.textContent = '';
+        operatorUsed = false;
+    }
+    else if(firstOperand !== ''){
+        firstOperand.textContent = firstOperand.textContent.slice(0, firstOperand.textContent.length -1);
+        if(firstOperand.textContent.length === 0){
+            firstOperand.textContent = 0;
+        }
+    }
+}
+
 function resetCounts(){
     operatorUsed = DEFAULT_OPERATOR_USED;
     equalsPressed = DEFAULT_EQUALS_PRESSED;
     dotUsed = DEFAULT_DOT_USED;
+    numPressed = false;
 }
 
 function resetAll(){
     operatorUsed = DEFAULT_OPERATOR_USED;
     equalsPressed = DEFAULT_EQUALS_PRESSED;
     dotUsed = DEFAULT_DOT_USED;
+    numPressed = false;
     firstOperand.textContent = DEFAULT_FIRST_NUM;
     if(document.querySelector('#operator')){
         operator.textContent = DEFAULT_OPERATOR;
@@ -179,13 +228,15 @@ function resetAll(){
     displaySol.textContent = DEFAULT_SOL;
 }
 
+///////////////////
+//Math-Functions//
+/////////////////
+
 function round(float){
-    console.log('float ist ' + float);
     let decimalPlacesCounter=0;
     let pointPosition ='';
     float=String(float);
     for(let i=1;float.charAt(float.length -i);i++){
-        console.log('floatie is ' + float.slice(-i));
         if(float.slice(-i) === '0'){
             decimalPlacesCounter++;
         }
@@ -204,7 +255,6 @@ function round(float){
         return float.toPrecision(floatLength-1);
     }
     else{
-        console.log('za');
         return float;
     }
 }
@@ -228,9 +278,6 @@ function divide(a,b){
 function operate(usedOperator,a,b){
     a=parseFloat(a);
     b=parseFloat(b);
-
-    console.log(a)
-    console.log(b)
     
     if(usedOperator ==='+'){
        return round(add(a,b));
