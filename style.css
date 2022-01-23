@@ -37,7 +37,7 @@ body {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
     width: 90%;
-    min-height: 3em;
+    min-height: 3.5em;
     background-color: rgb(189, 215, 255);
     border: 0.1em solid rgb(124, 124, 124);
     border-radius: 15px;
@@ -99,4 +99,9 @@ body {
 .test{
     display: flex;
     flex-direction: row;
+}
+
+p {
+    margin-bottom: 0px;
+    margin-top: 0px;
 }

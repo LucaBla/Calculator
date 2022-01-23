@@ -155,6 +155,7 @@ function addToSecondNum(toAdd){
             createSecondNum(toAdd);
         }
     }
+    splitLines();
 }
 
 function changeOperator(newOperator){
@@ -169,6 +170,7 @@ function changeOperator(newOperator){
     dotUsed = false;
     numPressed = false;
     }
+    splitLines();
 }
 
 function addDot(input){
@@ -187,6 +189,18 @@ function useOperatorOnSol(operatorForSol){
     operator.textContent = operatorForSol;
     resetCounts();
     operatorUsed =true;
+}
+
+function splitLines(){
+    if(firstOperand.textContent.length > 2 || secondOperand.textContent.length > 2){
+        para=displayCalc.insertBefore(document.createElement('p'),operator);
+        para2 =displayCalc.insertBefore(document.createElement('p'),operator.nextSibling);
+        para3 =displayCalc.appendChild(document.createElement('p'),operator.nextSibling);
+        para.appendChild(firstOperand);
+        para2.appendChild(operator);
+        para3.appendChild(secondOperand);
+
+    }
 }
 
 ////////////////////////////////
@@ -211,6 +225,14 @@ function deleteLastChar(){
             firstOperand.textContent = 0;
         }
     }
+    if(firstOperand.textContent.length <= 2){
+        displayCalc.appendChild(firstOperand);
+        displayCalc.appendChild(operator);
+        displayCalc.appendChild(secondOperand);
+        para.remove();
+        para2.remove();
+        para3.remove();
+    }
 }
 
 function resetCounts(){
@@ -219,7 +241,9 @@ function resetCounts(){
     dotUsed = DEFAULT_DOT_USED;
     numPressed = false;
 }
-
+let para
+let para2
+let para3
 function resetAll(){
     operatorUsed = DEFAULT_OPERATOR_USED;
     equalsPressed = DEFAULT_EQUALS_PRESSED;
@@ -233,6 +257,12 @@ function resetAll(){
         secondOperand.textContent = DEFAULT_SECOND_NUM;
     }
     displaySol.textContent = DEFAULT_SOL;
+    displayCalc.appendChild(firstOperand);
+    displayCalc.appendChild(operator);
+    displayCalc.appendChild(secondOperand);
+    para.remove();
+    para2.remove();
+    para3.remove();
 }
 
 ///////////////////
