@@ -1,3 +1,6 @@
+/////////////
+//Constants//
+////////////
 
 const DEFAULT_FIRST_NUM = 0;
 const DEFAULT_SECOND_NUM = '';
@@ -7,6 +10,9 @@ const DEFAULT_DOT_USED = false;
 const DEFAULT_EQUALS_PRESSED = false;
 const DEFAULT_SOL = 0;
 
+/////////////
+//Variables//
+////////////
 
 let btns = document.querySelectorAll('.btn');
 let numBtns = document.querySelectorAll('.num-btn');
@@ -17,6 +23,9 @@ let equalsBtn = document.querySelector('#equal');
 let displayCalc = document.querySelector('#calculation');
 let displaySol = document.querySelector('#sol');
 
+let para
+let para2
+let para3
 
 let firstOperand = document.querySelector('#first-num');
 let secondOperand = '';
@@ -28,11 +37,15 @@ let dotUsed = DEFAULT_DOT_USED;
 
 let operators =['/','x','-','+'];
 
+///////////////////
+//funky functions//
+//////////////////
 
 function loadCalculator(){
     displaySol.textContent = DEFAULT_SOL
     firstOperand.textContent = DEFAULT_FIRST_NUM
     asignBtns();
+    createSecondNum('');
 }
 
 function asignBtns(){
@@ -75,7 +88,6 @@ function reloadDisplayCalc(input){
         else if(!operators.includes(input) && equalsPressed === true && input !== '='){
             resetAll();
             if(input !== '.'){
-                console.log('test');
                 firstOperand.textContent = input;
             }
             else{
@@ -84,6 +96,7 @@ function reloadDisplayCalc(input){
             }
         }
     }
+    splitLines();
 }
 
 function calculateResult(){
@@ -105,11 +118,29 @@ function calculateResult(){
     }
 }
 
+function splitLines(){
+    if((firstOperand.textContent.length > 2 || secondOperand.textContent.length > 2 )
+    && firstOperand.parentNode.id === document.getElementById('calculation').id && operator !== ''){
+        para=displayCalc.insertBefore(document.createElement('p'),operator);
+        para2 =displayCalc.insertBefore(document.createElement('p'),operator.nextSibling);
+        para.appendChild(firstOperand);
+        para2.appendChild(operator);
+    }
+    else if(document.querySelector('#second-num') && para3 !== undefined){
+        para3 =displayCalc.appendChild(document.createElement('p'));
+        para3.appendChild(secondOperand);
+    }
+}
+
+///////////////////////////
+//Create or add-functions//
+//////////////////////////
+
 function createOperator(newOperator){
     operator=document.createElement('span');
     operator.id ='operator';
     operator.textContent = newOperator;
-    displayCalc.appendChild(operator);
+    displayCalc.insertBefore(operator, secondOperand);
     operatorUsed = true;
 }
 
@@ -121,7 +152,7 @@ function createSecondNum(newNum){
 }
 
 function addToFirstNum(toAdd){
-        if(firstOperand.textContent == 0 && toAdd === '.' || firstOperand.textContent != 0){
+        if(firstOperand.textContent == 0 && toAdd === '.' || firstOperand.textContent !== '0'){
             addDot(toAdd);
         }
         else if(firstOperand.textContent === '0.'){
@@ -158,6 +189,20 @@ function addToSecondNum(toAdd){
     splitLines();
 }
 
+function addDot(input){
+    if(dotUsed === false && input === '.'){
+        firstOperand.textContent = firstOperand.textContent + input;
+        dotUsed = true;
+    }
+    else if(dotUsed === true && input !== '.' || dotUsed === false && input !== '.'){
+        firstOperand.textContent = firstOperand.textContent + input;
+    }
+}
+
+//////////////////////
+//operator functions//
+/////////////////////
+
 function changeOperator(newOperator){
     if(document.querySelector('#operator')){
         operator.textContent = newOperator;
@@ -173,34 +218,12 @@ function changeOperator(newOperator){
     splitLines();
 }
 
-function addDot(input){
-    if(dotUsed === false && input === '.'){
-        firstOperand.textContent = firstOperand.textContent + input;
-        dotUsed = true;
-    }
-    else if(dotUsed === true && input !== '.' || dotUsed === false && input !== '.'){
-        firstOperand.textContent = firstOperand.textContent + input;
-    }
-}
-
 function useOperatorOnSol(operatorForSol){
     firstOperand.textContent = displaySol.textContent;
     secondOperand.textContent = DEFAULT_SECOND_NUM;
     operator.textContent = operatorForSol;
     resetCounts();
     operatorUsed =true;
-}
-
-function splitLines(){
-    if(firstOperand.textContent.length > 2 || secondOperand.textContent.length > 2){
-        para=displayCalc.insertBefore(document.createElement('p'),operator);
-        para2 =displayCalc.insertBefore(document.createElement('p'),operator.nextSibling);
-        para3 =displayCalc.appendChild(document.createElement('p'),operator.nextSibling);
-        para.appendChild(firstOperand);
-        para2.appendChild(operator);
-        para3.appendChild(secondOperand);
-
-    }
 }
 
 ////////////////////////////////
@@ -227,11 +250,19 @@ function deleteLastChar(){
     }
     if(firstOperand.textContent.length <= 2){
         displayCalc.appendChild(firstOperand);
-        displayCalc.appendChild(operator);
+        if(operator !== ''){
+            displayCalc.appendChild(operator);
+        }
         displayCalc.appendChild(secondOperand);
+        deletePara(para);
+        deletePara(para2);
+        deletePara(para3);
+    }
+}
+
+function deletePara(para){
+    if(para !== undefined){
         para.remove();
-        para2.remove();
-        para3.remove();
     }
 }
 
@@ -241,9 +272,7 @@ function resetCounts(){
     dotUsed = DEFAULT_DOT_USED;
     numPressed = false;
 }
-let para
-let para2
-let para3
+
 function resetAll(){
     operatorUsed = DEFAULT_OPERATOR_USED;
     equalsPressed = DEFAULT_EQUALS_PRESSED;
@@ -258,11 +287,13 @@ function resetAll(){
     }
     displaySol.textContent = DEFAULT_SOL;
     displayCalc.appendChild(firstOperand);
-    displayCalc.appendChild(operator);
+    if(operator !== ''){
+        displayCalc.appendChild(operator);
+    }
     displayCalc.appendChild(secondOperand);
-    para.remove();
-    para2.remove();
-    para3.remove();
+    deletePara(para);
+    deletePara(para2);
+    deletePara(para3);
 }
 
 ///////////////////
@@ -298,10 +329,12 @@ function round(float){
 
 function convertToPercent(num){
     if(secondOperand === '' || secondOperand.textContent === ''){
-        console.log('test');
         firstOperand.textContent = firstOperand.textContent /100;
-    }else{
+    }else if(equalsPressed === false){
         secondOperand.textContent = secondOperand.textContent / 100;
+    }
+    else{
+        displaySol.textContent = displaySol.textContent /100;
     }
 }
 
