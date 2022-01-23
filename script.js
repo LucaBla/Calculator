@@ -20,7 +20,7 @@ let displaySol = document.querySelector('#sol');
 
 let firstOperand = document.querySelector('#first-num');
 let secondOperand = '';
-let operator;
+let operator = '';
 let operatorUsed = DEFAULT_OPERATOR_USED;
 let equalsPressed = DEFAULT_EQUALS_PRESSED;
 let numPressed = false;
@@ -72,6 +72,7 @@ function reloadDisplayCalc(input){
         else if(!operators.includes(input) && equalsPressed === true && input !== '='){
             resetAll();
             if(input !== '.'){
+                console.log('test');
                 firstOperand.textContent = input;
             }
             else{
@@ -95,6 +96,9 @@ function calculateResult(){
         displaySol.textContent = 'ERROR';
     }else if(displaySol.textContent === 'NaN'){
         displaySol.textContent = firstOperand.textContent;
+    }
+    if(operator === ''){
+        equalsPressed = false;
     }
 }
 
@@ -290,6 +294,8 @@ function operate(usedOperator,a,b){
     }
     else if(usedOperator ==='/'){
         return round(divide(a,b));
+    }else{
+        return a;
     }
 }
 
