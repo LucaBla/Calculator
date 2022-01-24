@@ -35,7 +35,7 @@ let equalsPressed = DEFAULT_EQUALS_PRESSED;
 let numPressed = false;
 let dotUsed = DEFAULT_DOT_USED;
 
-let operators =['/','x','-','+'];
+let operators =['/','x','-','+','*'];
 
 ///////////////////
 //funky functions//
@@ -109,6 +109,7 @@ function reloadDisplayCalc(input){
 
 function addPressedKeyToCalc(e){
     let allowedKeys= ['0','1','2','3','4','5','6','7','8','9','Backspace','Delete','%','.','=','Enter']
+
     allowedKeys = allowedKeys.concat(operators);
     if(allowedKeys.includes(e.key)){
         reloadDisplayCalc(e.key);
@@ -227,6 +228,9 @@ function addDot(input){
 /////////////////////
 
 function changeOperator(newOperator){
+    if(newOperator === '*'){
+        newOperator = 'x';
+    }
     if(document.querySelector('#operator')){
         operator.textContent = newOperator;
         operatorUsed = true;
@@ -244,7 +248,8 @@ function changeOperator(newOperator){
 function useOperatorOnSol(operatorForSol){
     firstOperand.textContent = displaySol.textContent;
     secondOperand.textContent = DEFAULT_SECOND_NUM;
-    operator.textContent = operatorForSol;
+    //operator.textContent = operatorForSol;
+    changeOperator(operatorForSol);
     resetCounts();
     operatorUsed =true;
 }
@@ -258,6 +263,9 @@ function deleteLastChar(){
         equalsPressed = false;
     }
     if(document.querySelector('#second-num') && secondOperand.textContent !== ''){
+        if(secondOperand.textContent[secondOperand.textContent.length-1] === '.'){
+            dotUsed = false;
+        }
         secondOperand.textContent = secondOperand.textContent.slice(0, secondOperand.textContent.length -1);
         if(secondOperand.textContent === ''){
             numPressed = false;
@@ -268,6 +276,9 @@ function deleteLastChar(){
         operatorUsed = false;
     }
     else if(firstOperand !== ''){
+        if(firstOperand.textContent[firstOperand.textContent.length-1] === '.'){
+            dotUsed = false;
+        }
         firstOperand.textContent = firstOperand.textContent.slice(0, firstOperand.textContent.length -1);
         if(firstOperand.textContent.length === 0){
             firstOperand.textContent = 0;
@@ -279,6 +290,7 @@ function deleteLastChar(){
             displayCalc.appendChild(operator);
         }
         displayCalc.appendChild(secondOperand);
+
         deletePara(para);
         deletePara(para2);
         deletePara(para3);
@@ -316,6 +328,7 @@ function resetAll(){
         displayCalc.appendChild(operator);
     }
     displayCalc.appendChild(secondOperand);
+
     deletePara(para);
     deletePara(para2);
     deletePara(para3);
@@ -325,8 +338,8 @@ function resetAll(){
 //Math-Functions//
 /////////////////
 
-function changeSign(num){
-    if(num === '-'){
+function changeSign(sign){
+    if(sign === '-'){
         return '-';
     }else{
         return '';
@@ -346,7 +359,9 @@ function round(float){
             break;
         }
     }
+
     let floatLength = float.length
+
     float = parseFloat(float);
     if(decimalPlacesCounter !== 0 && pointPosition !== ''){
         return float.toPrecision(floatLength-decimalPlacesCounter);
