@@ -46,6 +46,7 @@ function loadCalculator(){
     firstOperand.textContent = DEFAULT_FIRST_NUM
     asignBtns();
     createSecondNum('');
+    window.addEventListener('keydown', addPressedKeyToCalc);
 }
 
 function asignBtns(){
@@ -60,13 +61,13 @@ function getClickedBtn(){
 }
 
 function reloadDisplayCalc(input){
-    if(input === '='){
+    if(input === '=' || input === 'Enter'){
         calculateResult();
     }
-    else if(input === 'AC'){
+    else if(input === 'AC' || input === 'Delete'){
         resetAll();
     }
-    else if(input ==='C'){
+    else if(input ==='C' || input === 'Backspace'){
         deleteLastChar();
     }
     else if(input === '%'){
@@ -76,7 +77,7 @@ function reloadDisplayCalc(input){
         addToFirstNum(input);
     }
     else if(operators.includes(input) && operatorUsed === false){ 
-        if(numPressed === false){
+        if(numPressed === false && firstOperand.textContent === '0' || firstOperand.textContent === ''){
             firstOperand.textContent = changeSign(input);
         }else{
             changeOperator(input);
@@ -95,15 +96,23 @@ function reloadDisplayCalc(input){
         else if(!operators.includes(input) && equalsPressed === true && input !== '='){
             resetAll();
             if(input !== '.'){
-                firstOperand.textContent = input;
+                addToFirstNum(input);
             }
             else{
-                firstOperand.textContent = '0.';
+                addToFirstNum('0.');
                 dotUsed = true;
             }
         }
     }
     splitLines();
+}
+
+function addPressedKeyToCalc(e){
+    let allowedKeys= ['0','1','2','3','4','5','6','7','8','9','Backspace','Delete','%','.','=','Enter']
+    allowedKeys = allowedKeys.concat(operators);
+    if(allowedKeys.includes(e.key)){
+        reloadDisplayCalc(e.key);
+    }
 }
 
 function calculateResult(){
@@ -115,14 +124,10 @@ function calculateResult(){
         firstOperand.textContent = displaySol.textContent;
         displaySol.textContent = operate(operator.textContent,firstOperand.textContent,secondOperand.textContent);
     }
-    if(displaySol.textContent === 'Infinity'){
-        displaySol.textContent = 'ERROR';
-    }else if(displaySol.textContent === 'NaN'){
-        displaySol.textContent = firstOperand.textContent;
-    }
     if(operator === ''){
         equalsPressed = false;
     }
+    checkResult();
 }
 
 function splitLines(){
@@ -137,6 +142,16 @@ function splitLines(){
         para3 =displayCalc.appendChild(document.createElement('p'));
         para3.appendChild(secondOperand);
     }
+}
+
+function checkResult(){
+    if(displaySol.textContent === 'Infinity' || operators.includes(firstOperand.textContent) 
+    || operators.includes(secondOperand.textContent)){
+        displaySol.textContent = 'ERROR';
+    }
+    else if(displaySol.textContent === 'NaN'){
+        displaySol.textContent = firstOperand.textContent;
+    }    
 }
 
 ///////////////////////////
