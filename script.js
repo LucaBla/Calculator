@@ -75,15 +75,22 @@ function reloadDisplayCalc(input){
     else if(!operators.includes(input) && operatorUsed === false){
         addToFirstNum(input);
     }
-    else if(operatorUsed === false && operators.includes(input)){ 
-        changeOperator(input);
+    else if(operators.includes(input) && operatorUsed === false){ 
+        if(numPressed === false){
+            firstOperand.textContent = changeSign(input);
+        }else{
+            changeOperator(input);
+        }
     }
     else if(operatorUsed === true){
         if(!operators.includes(input) && equalsPressed === false){
             addToSecondNum(input);
         }
+        else if(operators.includes(input) && equalsPressed === false && numPressed === false){
+                secondOperand.textContent = changeSign(input);
+        }
         else if(operators.includes(input) && equalsPressed === true){
-            useOperatorOnSol(input);
+                useOperatorOnSol(input);
         }
         else if(!operators.includes(input) && equalsPressed === true && input !== '='){
             resetAll();
@@ -187,6 +194,7 @@ function addToSecondNum(toAdd){
         }
     }
     splitLines();
+    numPressed = true;
 }
 
 function addDot(input){
@@ -236,7 +244,9 @@ function deleteLastChar(){
     }
     if(document.querySelector('#second-num') && secondOperand.textContent !== ''){
         secondOperand.textContent = secondOperand.textContent.slice(0, secondOperand.textContent.length -1);
-
+        if(secondOperand.textContent === ''){
+            numPressed = false;
+        }
     }
     else if(document.querySelector('#operator') && operator.textContent !== ''){
         operator.textContent = '';
@@ -299,6 +309,14 @@ function resetAll(){
 ///////////////////
 //Math-Functions//
 /////////////////
+
+function changeSign(num){
+    if(num === '-'){
+        return '-';
+    }else{
+        return '';
+    }
+}
 
 function round(float){
     let decimalPlacesCounter=0;
